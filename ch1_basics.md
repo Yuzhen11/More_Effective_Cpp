@@ -73,11 +73,13 @@ The problem is similar if you try to delete an array of derived class objects th
 ## Item 4: Avoid gratuitou default constructors
 
 The lacking default constructors may be problematic in three contexts:
+
 1. The creation of arrays.
 2. Ineligible for use with many template-based container classes
 3. Virtual base classes lacking default constructors are a pain to work with
 
 Some workaround for the first context:
+
 1. Provide the necessary arguments at the point where the array is defined. (Only work for stack)
 2. Use array of pointers
 3. Use placement new. But be careful wehn deleting them.
