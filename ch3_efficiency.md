@@ -1,5 +1,123 @@
 # Ch3: Efficiency
 
+## Item 19: Understand the origin of temporary objects
+
+Unnamed objects usually arise in one of two situations: 
+
+1. When implicity type conversions are applied to  make function calls succeed.
+2. When functions return objects.
+
+```c++
+int countChar(cosnt string& str, char ch);
+
+char buffer[MAX_STRING_LEN];
+countChar(buffer, ch);
+```
+Temporary object will be created and destroyed!
+
+It's convenient but has unnecessary expense.
+
+Solutions:
+
+1. Redesign your code so conversions like these can't take place. Item 5
+2. Modify your software so that the conversions are unnecessary. Item 21
+
+These conversions occur only when passing objects by value or reference-to-const. They do not occur
+when passing an object to a reference-to-non-const parameter.
+
+No temporary is created. Pass by reference means it's ok to modify it, but you are modifying a temporary.
+
+For return value, there are return value optimization.
+
+Unnamed objects offer compilers more flexibility in optimization than named objects.
+
+Train yourself to look for places where temporary objects may be created. Anytime you see a reference-to-cosnt parameter,
+the possiblity exists that a temporary will be created to bind to that parameter.
+
+## Item 20: Facilitate the return value optimization
+
+Old topic, also in Effective C++.
+
+Don't try to return pointer or reference when you need to return an object.
+
+Just return the value!!! Return value optimization will help.
+
+
+## Item 21: Overload to avoid implicit type conversions
+```c++
+class UPInt {
+public:
+    UPInt();
+    UPInt(int value);
+    ...
+};
+const UPInt operator+(const UPInt& lhs, const UPInt& rhs);
+
+UPInt upi1, upi2;
+UPInt upi3 = upi1 + upi2;
+upi3 = upi1 + 10;
+upi3 = 10 + upi1;
+```
+
+Thye do so through the creation of temporary object ot convert the integer 10 into UPInts.
+
+Implicit type conversions without incurring any cost for temporaries.
+
+Overload!
+
+```c++
+const UPInt operator+(const UPInt& lhs, int rhs);
+const UPInt operator+(int lhs, const UPInt& rhs);
+
+upi3 = upi1 + 10;  // find, no temporary for upi1 or 10
+upi3 = 10 + upi1;  // find, no temporary for upi1 or 10
+```
+
+```c++
+const UPInt operator+(int lhs, int rhs);  // error
+```
+
+Every overloaded opeartor must take at least one argument of a user-defined type.
+
+## Item 22: Consider using op= instread of stand-alone op
+
+```c++
+class Rational {
+public:
+    Rational& operator+=(const Rational& rhs);
+};
+// operator+ implemented in terms of operator+=
+const Rational operator+=(const Rational& lrs, const Rational& rhs) {
+    return Rational(lhs) += rhs;
+}
+```
+
+1. Assignment versions of operators are more efficient than stand-alone versions. (no need to retuen a new object)
+2. Allow clients of your classes to make the difficult trade-off between efficiency and convenience.
+```c++
+result = a+b+c+d;  // 3 temporary objects
+
+result = a;
+result += b;  // no temporary needed
+result += c;
+result += d;
+```
+
+Assignment versions of operators (such as operator+=) tend to be more efficient than stand-alone versions of those
+operators(e.g. operator+).
+
+Interesting to know that long time ago, return value optimization is not that powerful and can only work for unnamed objects.
+
+As a library designer, you should offer both. As an application developer, you should consider using assignment versions.
+
+## Item 23: Consider alternative libraries
+
+Different libaraies offering similar functionality often feature different performance trade-offs.
+
+Different libraries embody different desgin decisions regarding efficiency, extensibiltiy, portability, type safety, and other issues.
+
+Different designers assign different priorities to these criteria. They thus sacrifice different things in their designs.
+
 ## Item 24: Understand the costs of virtual functions, multiple inheritance, virtual base classes, and RTTI
 
 virtual tables and virtual table pointers.
