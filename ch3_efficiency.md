@@ -1,5 +1,45 @@
 # Ch3: Efficiency
 
+Language-independent and C++-related
+
+## Item 16: Remember the 80-20 rule
+
+The overall performance of your software is almost alwasy determined by a small part of its constituent code.
+
+Use Profilers
+
+## Item 17: Consider using lazy evaluation
+
+Four examples:
+
+1. To avoid unnecessary copying of objects
+    
+    reference counting
+
+2. To distinguish reads from writes using operator[]
+
+3. To avoid unnecessary reads from databases
+
+    Lazy fetching, fetch the field on demand
+
+    mutable keywords may be used: Update a field pointer in const member function
+
+4. To avoid unnecessary numerical computations
+
+Lazy evalution is only useful when there's a resonable chance your software will be asked to perform
+computations that can be avoided.
+
+## Item 18: Amortize the cost of expected computations
+
+Over-eager evaluation: cache min, max, avg
+
+Caching: cache data from database
+
+Prefetching: allocate more memroy than needed
+
+Over-eager evaluation is a technique for improving the efficiency of programs when you must support operations
+whose results are almost always needed or whose results are often needed more than once.
+
 ## Item 19: Understand the origin of temporary objects
 
 Unnamed objects usually arise in one of two situations: 
@@ -25,7 +65,7 @@ Solutions:
 These conversions occur only when passing objects by value or reference-to-const. They do not occur
 when passing an object to a reference-to-non-const parameter.
 
-No temporary is created. Pass by reference means it's ok to modify it, but you are modifying a temporary.
+In this case, no temporary is created. Pass by reference means it's ok to modify it, but you are modifying a temporary.
 
 For return value, there are return value optimization.
 
@@ -59,9 +99,9 @@ upi3 = upi1 + 10;
 upi3 = 10 + upi1;
 ```
 
-Thye do so through the creation of temporary object ot convert the integer 10 into UPInts.
+They do so through the creation of temporary object ot convert the integer 10 into UPInts.
 
-Implicit type conversions without incurring any cost for temporaries.
+If you want implicit type conversions without incurring any cost for temporaries?
 
 Overload!
 
@@ -120,7 +160,7 @@ Different designers assign different priorities to these criteria. They thus sac
 
 ## Item 24: Understand the costs of virtual functions, multiple inheritance, virtual base classes, and RTTI
 
-virtual tables and virtual table pointers.
+**virtual tables and virtual table pointers**
 
 A vtbl is usually an array of pointers to functions. Each class that declares or inherits a virtual functions has its
 own vtbl. The entries in a class's vtbl are pointers to the implementations of the virtual functions for that class.
