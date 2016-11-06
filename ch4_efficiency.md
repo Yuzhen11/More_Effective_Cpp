@@ -1,5 +1,6 @@
 # Ch3: Efficiency
 
+Two types of efficiency:
 Language-independent and C++-related
 
 ## Item 16: Remember the 80-20 rule
@@ -48,7 +49,7 @@ Unnamed objects usually arise in one of two situations:
 2. When functions return objects.
 
 ```c++
-int countChar(cosnt string& str, char ch);
+int countChar(const string& str, char ch);
 
 char buffer[MAX_STRING_LEN];
 countChar(buffer, ch);
@@ -65,13 +66,15 @@ Solutions:
 These conversions occur only when passing objects by value or reference-to-const. They do not occur
 when passing an object to a reference-to-non-const parameter.
 
+An error will be reported.
+
 In this case, no temporary is created. Pass by reference means it's ok to modify it, but you are modifying a temporary.
 
 For return value, there are return value optimization.
 
 Unnamed objects offer compilers more flexibility in optimization than named objects.
 
-Train yourself to look for places where temporary objects may be created. Anytime you see a reference-to-cosnt parameter,
+Train yourself to look for places where temporary objects may be created. Anytime you see a reference-to-const parameter,
 the possiblity exists that a temporary will be created to bind to that parameter.
 
 ## Item 20: Facilitate the return value optimization
@@ -127,7 +130,7 @@ public:
     Rational& operator+=(const Rational& rhs);
 };
 // operator+ implemented in terms of operator+=
-const Rational operator+=(const Rational& lrs, const Rational& rhs) {
+const Rational operator+(const Rational& lrs, const Rational& rhs) {
     return Rational(lhs) += rhs;
 }
 ```

@@ -114,7 +114,7 @@ Use of smart pointer is easy and robust in the face of exceptions!
 
 ## Item 11: Prevent exceptions from leaving destructors
 
-Two situations a constructor is called.
+Two situations a destructor is called.
 
 1. when an object is destroyed under "normal" conditions, e.g., when it goes out of scope or is explicitly deleted.
 2. when an object is destroyed by the exception-handling mechanism during the stack-unwinding part of exception propagation.
@@ -144,11 +144,13 @@ catch(Widget& w) {
     ...
     throw;  // prefer this one. No copy is made. if the exception originally 
             // thrown was of type SpecialWidget, it will proprocate a SpecialWidget exception
+            // rethrow the exception
 }
 
 catch(Widget& w) {
     ...
     throw w;  // throw a new exception which is type Widget.
+              // propagate a copy of the caught exception
 }
 
 ```
@@ -158,6 +160,8 @@ Three primary differences:
 1. Exception objects are always copied; when caught by value, they are copied twice.
 
     Need to copy even if we catch by reference.
+
+    So it's fine to throw a local variable and catch by reference (a copy will be made).
 
 2. Objects thrown as exceptions are subject to fewer form of type conversion than are objects passed to functions.
 
@@ -197,6 +201,8 @@ void f2() throw(int) {
 may be called.
 
 2. Exception specifications on user defined callback functions.
+
+    Provide exception specifications for the signatures of call back function. So user-provided call back function must match the specifications.
 
 3. Handle exceptions "the system" may throw. E.g. bad_alloc in operator new.
 
